@@ -723,10 +723,10 @@ class App(QWidget):
 
         if fname:
             columns = range(self.roi_stat_table.columnCount())
-            header = [self.roi_stat_table.horizontalHeaderItem(column).text()
+            header = [self.roi_stat_table.horizontalHeaderItem(column).text().replace("Δ", "delta ")
                       for column in columns]
 
-            with open(fname, 'w') as csvfile:
+            with open(fname, 'w', encoding='utf-8') as csvfile:
                 writer = csv.writer(
                     csvfile, dialect='excel', lineterminator='\n')
                 writer.writerow(header)
@@ -757,7 +757,9 @@ class App(QWidget):
 
     def view_napari(self, ct, dose_measured=None, dose_planned=None):
         ct_scale = tuple((self.ct[0][i][2] - self.ct[0][i][1] for i in (0, 1, 2)))
-        viewer = napari.view_image(ct, name="CT", scale=ct_scale)
+
+        viewer = napari.Viewer()
+        viewer.add_image(ct, name="CT", scale=ct_scale)
 
         green = vispy.color.Colormap([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
         red = vispy.color.Colormap([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]])
